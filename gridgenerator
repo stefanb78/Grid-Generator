@@ -1,0 +1,97 @@
+import numpy as np
+import random
+import matplotlib.pyplot as plt
+import itertools
+
+# Fix the seed so that we always get the same rnd nums
+random.seed(10)
+
+def grid_duplicate_finder(grid, x_coords, y_coords): 
+    
+    # Loop over the offsets
+    central_cell = grid[y_coords][x_coords]
+    
+    offsets = list(itertools.product(*itertools.repeat([-1, 0, 1], 2)))
+    offsets.remove((0, 0))
+        
+    plt.plot([x_coords * 0.2 +0.1], [y_coords * 0.2 +0.1], marker = '+', c='w', markersize=10)
+    
+    for offset in offsets:
+        offset_x = offset[0]
+        offset_y = offset[1]
+        
+        try:
+            
+            neighbour_cell = grid[y_coords + offset_y][x_coords + offset_x]
+            #print(grid)
+            
+            if central_cell == neighbour_cell:
+                
+                if x_coords + offset_x < 0 or y_coords + offset_y < 0:
+                    pass
+                
+                
+                else:
+                    plt.plot([(x_coords + offset_x) * 0.2 +0.1], [(y_coords + offset_y) * 0.2 +0.1], marker = 'o', c='grey', markersize=10)
+                    #print("duplicate", offset, neighbour_cell)
+                    ##print('x_coords + offset_x = ', x_coords + offset_x, '| x_coords = ', x_coords, '| y_coords = ', y_coords, '| offset_x', offset_x, '| offset_y', offset_y)
+                    color_before = grid[y_coords + offset_y][x_coords + offset_x]
+                    grid[y_coords + offset_y][x_coords + offset_x] = random.choice([color for color in colourmap if color != color_before]) 
+                    color_after = grid[y_coords + offset_y][x_coords + offset_x]
+                    coordinatex = x_coords * 0.2
+                    coordinatey = y_coords * 0.2
+                    rectangle = plt.Rectangle((coordinatex, coordinatey) , 0.2, 0.2, fc=(color_after))
+                    axes.add_patch(rectangle)
+                    
+                    print(f'Color changed: {color_before != color_after} \t {color_before} --> {color_after}')
+                    raise IndexError
+                    
+                    
+        except IndexError as error:
+            pass
+            
+    
+
+def setup():
+    
+
+    a = [0, 1, 2, 3, 4]
+    b = [0, 1, 2, 3, 4]
+    c = [0, 1, 2, 3, 4]
+    d = [0, 1, 2, 3, 4]
+    e = [0, 1, 2, 3, 4]
+    
+    grid = [a, b, c, d, e]
+    
+    # Define color space
+    colourmap = ['red', 'green', 'blue', 'black', 'orange', 'cyan']
+    fig, axes = plt.subplots(1,1)
+    axes.set_aspect('equal', adjustable='box')
+
+    for index_y in range(len(grid)):
+    
+        for index_x in range(len(grid)):
+        
+            # print('old_element', grid[index_y][index_x])
+            grid[index_y][index_x] = random.choice(colourmap)
+            # print('new_element', grid[index_y][index_x])
+            colour = grid[index_y][index_x]
+            coordinatex = index_x * 0.2
+            coordinatey = index_y * 0.2
+            rectangle = plt.Rectangle((coordinatex, coordinatey) , 0.2, 0.2, fc=(colour))
+            axes.add_patch(rectangle)
+            
+            
+    return grid, colourmap, axes
+    
+grid, colourmap, axes = setup()
+
+plt.show()
+
+# Processing
+for _ in range(100):
+    for index_y in range(len(grid)):
+        for index_x in range(len(grid)):
+            grid_duplicate_finder(grid, index_x, index_y)
+
+plt.show()
